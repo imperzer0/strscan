@@ -30,7 +30,6 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 		--format;
 		
 		if (*format == '%')
-		{
 			switch (*++format)
 			{
 				case 's':
@@ -74,8 +73,35 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 					return 0;
 				}
 			}
-		}
+		
 	}
+	
+	if (*format == '%')
+		switch (*++format)
+		{
+			case 's':
+			{
+				char** result = va_arg(args, char**);
+				*result = (char*)calloc(1, sizeof(char));
+				(*result)[0] = 0;
+			}
+				break;
+			case 'c':
+			{
+				char* result = va_arg(args, char*);
+				*result = 0;
+			}
+				break;
+			case '%':
+				break;
+			default:
+			{
+				PRINT_ERROR(void strscanv(const char* source, const char* format, va_list args),
+				            Invalid format argument: %%%c, *format);
+				return 0;
+			}
+		}
+	
 	return 1;
 }
 
