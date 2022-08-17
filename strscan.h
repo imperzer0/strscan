@@ -7,9 +7,21 @@
 #ifndef STRSCAN_STRSCAN_
 #define STRSCAN_STRSCAN_
 
+#ifdef __cplusplus
+
+
+#include <cstring>
+#include <cstdarg>
+#include <cstdio>
+
+#else
+
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+
+#endif
 
 
 /// Maps source string to substrings using the given format
