@@ -46,12 +46,14 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 					     *source_it && !streq(source_it, format, pattern_size); ++source_it, ++arg_size);
 					
 					char** result = va_arg(args, char**);
-					*result = (char*)calloc(arg_size + 1, sizeof(char));
 					
+					if (!*format) arg_size = strlen(source);
+					
+					*result = (char*)calloc(arg_size + 1, sizeof(char));
 					strncpy(*result, source, arg_size);
 					(*result)[arg_size] = 0;
 					
-					source += arg_size + pattern_size;
+					source += arg_size + pattern_size - 1;
 					format += pattern_size;
 					--format;
 				}
