@@ -76,7 +76,7 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 					return 0;
 				}
 			}
-		
+		else ++format;
 	}
 	
 	return 1;
