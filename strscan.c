@@ -5,12 +5,16 @@
 // Commercial usage must be agreed with the author of this comment.
 
 #include <malloc.h>
+#include <stdarg.h>
 #include "strscan.h"
 
 
 #define STR(exp) #exp
 #define PRINT_ERROR(function, message, args) fprintf(stderr, \
 "Error in file '" __FILE_NAME__ "' in function '" STR(function) "' on line '%d': " STR(message) "\n", __LINE__, args)
+#define PRINT_ERROR_NOARGS(function, message) fprintf(stderr, \
+"Error in file '" __FILE_NAME__ "' in function '" STR(function) "' on line '%d': " STR(message) "\n", __LINE__)
+
 
 int strscanf(const char* __restrict source, const char* __restrict format, ...)
 {
@@ -25,10 +29,8 @@ int streq(const char* __restrict source_piece, const char* __restrict format_pie
 
 int vstrscanf(const char* __restrict source, const char* __restrict format, va_list args)
 {
-	for (; *source && *format && *++format; ++source, ++format)
+	for (; *source && *format; ++source)
 	{
-		--format;
-		
 		if (*format == '%')
 			switch (*++format)
 			{
@@ -41,8 +43,8 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 						if (*format_it == '%' && *++format_it != '%') break;
 					
 					size_t arg_size = 0;
-					for (const char* source_it = source;
-					     *source_it && !streq(source_it, format, pattern_size); ++source_it, ++arg_size);
+					const char* source_it = source;
+					for (; *source_it && !streq(source_it, format, pattern_size); ++source_it, ++arg_size);
 					
 					char** result = va_arg(args, char**);
 					
@@ -52,9 +54,10 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 					strncpy(*result, source, arg_size);
 					(*result)[arg_size] = 0;
 					
-					source += arg_size + pattern_size - 1;
+					source = source_it;
 					format += pattern_size;
-					--format;
+					
+					if (!*source) return 0;
 				}
 					break;
 				case 'c':
@@ -76,37 +79,12 @@ int vstrscanf(const char* __restrict source, const char* __restrict format, va_l
 		
 	}
 	
-	if (*format == '%')
-		switch (*++format)
-		{
-			case 's':
-			{
-				char** result = va_arg(args, char**);
-				*result = (char*)calloc(1, sizeof(char));
-				(*result)[0] = 0;
-			}
-				break;
-			case 'c':
-			{
-				char* result = va_arg(args, char*);
-				*result = 0;
-			}
-				break;
-			case '%':
-				break;
-			default:
-			{
-				PRINT_ERROR(void strscanv(const char* source, const char* format, va_list args),
-				            Invalid format argument: %%%c, *format);
-				return 0;
-			}
-		}
-	
 	return 1;
 }
 
 int streq(const char* __restrict source_piece, const char* __restrict format_piece, size_t length)
 {
+	if (length == 0) return 0;
 	for (int i = 0; i < length; ++i)
 	{
 		if (format_piece[i] == '%' && format_piece[i + 1] == '%') ++format_piece;
