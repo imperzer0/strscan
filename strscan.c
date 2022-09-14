@@ -10,6 +10,9 @@
 
 
 #define STR(exp) #exp
+#ifndef __FILE_NAME__
+#define __FILE_NAME__ __FILE__
+#endif
 #define PRINT_ERROR(function, message, args) fprintf(stderr, \
 "Error in file '" __FILE_NAME__ "' in function '" STR(function) "' on line '%d': " STR(message) "\n", __LINE__, args)
 #define PRINT_ERROR_NOARGS(function, message) fprintf(stderr, \
