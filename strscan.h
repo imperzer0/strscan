@@ -1,8 +1,5 @@
 // Copyright (c) 2022 Perets Dmytro
 // Author: Perets Dmytro <dmytroperets@gmail.com>
-//
-// Personal usage is allowed only if this comment was not changed or deleted.
-// Commercial usage must be agreed with the author of this comment.
 
 #ifndef STRSCAN_STRSCAN_H
 #define STRSCAN_STRSCAN_H
